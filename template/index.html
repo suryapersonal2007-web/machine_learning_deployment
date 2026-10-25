@@ -1,0 +1,168 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Diabetes Prediction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f1f5f9;
+            margin: 0;
+            padding: 25px 12px;
+        }
+        main {
+            max-width: 700px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+        }
+        h1, h2 { color: #0e7490; }
+        .fields {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+        label { display: block; margin-bottom: 5px; }
+        input, select {
+            box-sizing: border-box;
+            width: 100%;
+            padding: 10px;
+        }
+        button {
+            margin-top: 20px;
+            padding: 12px;
+            width: 100%;
+            background: #0e7490;
+            color: white;
+            border: 0;
+            cursor: pointer;
+        }
+        .result { padding: 15px; background: #ecfeff; }
+        .error { color: #b91c1c; }
+        @media (max-width: 500px) {
+            .fields { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<main>
+    <h1>Diabetes Prediction System</h1>
+    <p>Enter your measurements below.</p>
+
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
+
+    {% if prediction %}
+        <div class="result">
+            <h2>Prediction: {{ prediction }}</h2>
+            <p>Model probability: {{ probability }}</p>
+            <p>This is not a medical diagnosis.</p>
+        </div>
+    {% endif %}
+
+    <form action="{{ url_for('predict') }}" method="POST">
+        <h2>Blood measurements</h2>
+        <div class="fields">
+            <label>Cholesterol
+                <input type="number" name="chol" min="0" step="any" required>
+            </label>
+            <label>Stabilized glucose
+                <input type="number" name="stab_glu" min="0" step="any" required>
+            </label>
+            <label>HDL
+                <input type="number" name="hdl" min="0" step="any" required>
+            </label>
+            <label>Ratio
+                <input type="number" name="ratio" min="0" step="any" required>
+            </label>
+            <label>Time after meal
+                <input type="number" name="time_ppn" min="0" step="any" required>
+            </label>
+        </div>
+
+        <h2>Personal measurements</h2>
+        <div class="fields">
+            <label>Age
+                <input type="number" name="age" min="0" step="any" required>
+            </label>
+            <label>Height
+                <input type="number" name="height" min="0" step="any" required>
+            </label>
+            <label>Weight
+                <input type="number" name="weight" min="0" step="any" required>
+            </label>
+            <label>Waist
+                <input type="number" name="waist" min="0" step="any" required>
+            </label>
+            <label>Hip
+                <input type="number" name="hip" min="0" step="any" required>
+            </label>
+        </div>
+
+        <h2>Blood pressure</h2>
+        <div class="fields">
+            <label>First systolic BP
+                <input type="number" name="bp_1s" min="0" step="any" required>
+            </label>
+            <label>First diastolic BP
+                <input type="number" name="bp_1d" min="0" step="any" required>
+            </label>
+            <label>Second systolic BP
+                <input type="number" name="bp_2s" min="0" step="any" required>
+            </label>
+            <label>Second diastolic BP
+                <input type="number" name="bp_2d" min="0" step="any" required>
+            </label>
+        </div>
+
+        <h2>Additional information</h2>
+        <div class="fields">
+            <label>Location
+                <select name="location_Louisa">
+                    <option value="0">Other / reference location</option>
+                    <option value="1">Louisa</option>
+                </select>
+            </label>
+            <label>Gender category
+                <select name="gender_male">
+                    <option value="0">Female (encoded 0)</option>
+                    <option value="1">Male (encoded 1)</option>
+                </select>
+            </label>
+            <label>Body frame
+                <select id="frame" name="frame_choice">
+                    <option value="large">Large / reference category</option>
+                    <option value="medium">Medium</option>
+                    <option value="small">Small</option>
+                </select>
+            </label>
+        </div>
+
+        <input type="hidden" name="frame_medium" id="frame_medium" value="0">
+        <input type="hidden" name="frame_small" id="frame_small" value="0">
+
+        <button type="submit">Predict</button>
+    </form>
+
+    <p><small>For educational use only. Consult a qualified healthcare professional for diabetes testing.</small></p>
+</main>
+
+<script>
+    const frame = document.getElementById("frame");
+    const medium = document.getElementById("frame_medium");
+    const small = document.getElementById("frame_small");
+
+    function updateFrame() {
+        medium.value = frame.value === "medium" ? "1" : "0";
+        small.value = frame.value === "small" ? "1" : "0";
+    }
+
+    frame.addEventListener("change", updateFrame);
+    updateFrame();
+</script>
+</body>
+</html>
