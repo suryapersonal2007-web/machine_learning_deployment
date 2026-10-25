@@ -1,20 +1,25 @@
 
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request   
 import pickle
 import pandas as pd
 import numpy as np
 from pathlib import Path
+
 import pickle
-
 app = Flask(__name__)
+from pathlib import Path
 
+BASE_DIR = Path(__file__).resolve().parent
 
-# Export the trained model and the scaler
-with open('logistic_regression_model.pkl', 'wb') as model_file:
-    pickle.dump(model, model_file)
+MODEL_PATH = BASE_DIR / "logistic_regression_model.pkl"
+SCALER_PATH = BASE_DIR / "scaler.pkl"
 
-with open('scaler.pkl', 'wb') as scaler_file:
-    pickle.dump(scaler, scaler_file)
+with open(MODEL_PATH, "rb") as model_file:
+    model = pickle.load(model_file)
+
+with open(SCALER_PATH, "rb") as scaler_file:
+    scaler = pickle.load(scaler_file)
+
 
 print("Model successfully exported to 'logistic_regression_model.pkl'")
 print("Scaler successfully exported to 'scaler.pkl'")
